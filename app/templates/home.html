@@ -1,0 +1,87 @@
+<!doctype html>
+
+<html lang="en-us">
+  <style>
+    h1 {text-align: center}
+    h2 {text-align: center}
+    p {text-align: center}
+    table, th, td {
+      border: 1px solid black;
+      border-collapse: collapse;
+      text-align: center
+    }
+    th, td {
+      text-align: left;
+      padding: 8px 16px 8px 16px;
+    }
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+    table.center {
+      margin-left: auto; 
+      margin-right: auto;
+    }
+    .red {
+        color: red;
+    }
+
+    .green {
+        color: green;
+    }
+    button{
+      margin:auto;
+      display:block;
+    }
+
+    /* BUTTON STYLES */
+    button{
+      padding:16px 32px;
+      font-family:helvetica;
+      font-size:16px;
+      font-weight:100;
+      color:#fff;
+      background: #587286;
+      border:0;
+      font-weight:100;
+    }
+    button:hover{
+      background: #3B5C76;
+    }
+    /* END OF BUTTON STYLES */
+  </style>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>cAPIC Control Panel</title>
+  </head>
+
+  <body>
+    <h1>Cloud APIC Infra Control Panel</h1>
+    <h2>Cloud APIC AWS infra status</h2>
+    <table class="center">
+      <tr>
+        <th>Instance Name</th>
+        <th>Instance ID</th>
+        <th>Current Status</th>
+      </tr>
+        {% for name, id, status in AWS_instances %}
+          <tr>
+            <td>{{ name }}</td>
+            <td>{{ id }}</td>
+            <td class="{{'green' if status == 'running' else 'red'}}" style="text-align: center">{{ status }}</td>
+          </tr>
+        {% endfor %}
+    </table>
+
+  <p>Press below button to stop infra</p>
+  <form action="stop" button type="submit">
+    <button>STOP AWS INFRA</button>
+  </form>
+  <p></p>
+  <p>Press below button to start infra</p>  
+  <p></p>
+  <form action="start" button type="submit">
+    <button>START AWS INFRA</button>
+  </form>
+  </body>
+</html>
