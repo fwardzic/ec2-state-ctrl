@@ -30,27 +30,8 @@ def stop():
    AWS_InstanceID = jmespath.search('Reservations[*].Instances[*].InstanceId', response)
    Flatten = itertools.chain.from_iterable
    AWS_InstanceID_flat = list(Flatten(AWS_InstanceID))
-   for instance_id in AWS_InstanceID_flat:
-      try:
-        ec2.start_instances(InstanceIds=[instance_id], DryRun=True)
-      except ClientError as e:
-        if 'DryRunOperation' not in str(e):
-            raise
-
-      # Dry run succeeded, run start_instances without dryrun
-      try:
-          response = ec2.start_instances(InstanceIds=[instance_id], DryRun=False)
-      except ClientError as e:
-          print(e)
-   return render_template('stop.html', response=response)
-
-@app.route('/start')
-def start():
-   ec2 = boto3.client('ec2')
-   response = ec2.describe_instances()
-   AWS_InstanceID = jmespath.search('Reservations[*].Instances[*].InstanceId', response)
-   Flatten = itertools.chain.from_iterable
-   AWS_InstanceID_flat = list(Flatten(AWS_InstanceID))
+   CurrentState_List = []
+   InstanceId_List = []
    for instance_id in AWS_InstanceID_flat:
       try:
         ec2.stop_instances(InstanceIds=[instance_id], DryRun=True)
@@ -63,4 +44,37 @@ def start():
           response = ec2.stop_instances(InstanceIds=[instance_id], DryRun=False)
       except ClientError as e:
           print(e)
-   return render_template('stop.html', response=response)
+      CurrentState = jmespath.search('StoppingInstances[0].CurrentState.Name', response)
+      InstanceId = jmespath.search('StoppingInstances[0].InstanceId', response)
+      CurrentState_List.append(CurrentState)
+      InstanceId_List.append(InstanceId)
+
+   return render_template('stop.html', AWS_Stopped_Instances=zip(InstanceId_List, CurrentState_List))
+
+@app.route('/start')
+def start():
+   ec2 = boto3.client('ec2')
+   response = ec2.describe_instances()
+   AWS_InstanceID = jmespath.search('Reservations[*].Instances[*].InstanceId', response)
+   Flatten = itertools.chain.from_iterable
+   AWS_InstanceID_flat = list(Flatten(AWS_InstanceID))
+   CurrentState_List = []
+   InstanceId_List = []
+   for instance_id in AWS_InstanceID_flat:
+      try:
+        ec2.start_instances(InstanceIds=[instance_id], DryRun=True)
+      except ClientError as e:
+        if 'DryRunOperation' not in str(e):
+            raise
+
+      # Dry run succeeded, run start_instances without dryrun
+      try:
+          response = ec2.start_instances(InstanceIds=[instance_id], DryRun=False)
+      except ClientError as e:
+          print(e)
+      CurrentState = jmespath.search('StartingInstances[0].CurrentState.Name', response)
+      InstanceId = jmespath.search('StartingInstances[0].InstanceId', response)
+      CurrentState_List.append(CurrentState)
+      InstanceId_List.append(InstanceId)
+
+   return render_template('start.html', AWS_Started_Instances=zip(InstanceId_List, CurrentState_List))

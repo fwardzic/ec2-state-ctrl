@@ -1,14 +1,22 @@
 <!doctype html>
 <html lang="en-us">
+    <style>
+        h1 {text-align: center}
+        h2 {text-align: center}
+        p {text-align: center}
+    </style>
     <head>
         <meta charset="utf-8">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
         <title>cAPIC Control Panel</title>
     </head>
     <body>
-        <p>Infra Started</p>
         <script>
             document.write('<a href="' + document.referrer + '">Go Back</a>');
         </script>
+        <h2>Infra Started</h2>
+        {% for id,state in AWS_Started_Instances %}
+        <p>AWS Instance {{ id }} changed state to {{ state }}</p>
+        {% endfor %}
     </body>
 </html>

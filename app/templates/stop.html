@@ -1,5 +1,10 @@
 <!doctype html>
 <html lang="en-us">
+    <style>
+        h1 {text-align: center}
+        h2 {text-align: center}
+        p {text-align: center}
+    </style>
     <head>
         <meta charset="utf-8">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -9,7 +14,9 @@
         <script>
             document.write('<a href="' + document.referrer + '">Go Back</a>');
         </script>
-        <p>Infra Stopped</p>
-        <p>{{ response }}</p>
+        <h2>Infra Stopped</h2>
+        {% for id,state in AWS_Stopped_Instances %}
+        <p>AWS Instance {{ id }} changed state to {{ state }}</p>
+        {% endfor %}
     </body>
 </html>
